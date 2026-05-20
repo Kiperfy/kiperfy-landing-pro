@@ -1,253 +1,276 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Receipt,
   CreditCard,
-  FileText,
   Gift,
-  ClipboardList,
-  Package,
-  QrCode,
   Wrench,
   Bell,
-  FileSpreadsheet,
-  MousePointer2,
+  QrCode,
+  Smartphone,
+  BarChart3,
+  MessageCircle,
+  Boxes,
+  Check,
+  ChevronDown,
+  Instagram,
+  MessageCircleMore,
 } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
+import type { CopyKey } from "@/lib/kiperfy-copy";
+import { LoginModal, SignupModal, type ModuleId } from "@/components/kiperfy/AuthModals";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  const [appView, setAppView] = useState<"mobile" | "web">("mobile");
+  const { t, lang, setLang } = useLang();
+  const [activeTab, setActiveTab] = useState<ModuleId>("pro");
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
+  const [signupModule, setSignupModule] = useState<ModuleId>("pro");
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const openSignup = (m: ModuleId) => {
+    setSignupModule(m);
+    setSignupOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-slate-900 antialiased">
+      <Navbar
+        lang={lang}
+        setLang={setLang}
+        onLogin={() => setLoginOpen(true)}
+        onSignup={() => openSignup("pro")}
+        scrolled={scrolled}
+      />
+
       {/* ===== HERO ===== */}
-      <section className="relative overflow-hidden">
-        {/* mint gradient sky */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#a8eccf] via-[#7fdfbe] to-[#6dd5b0]" />
-        {/* clouds */}
+      <section className="relative overflow-hidden pt-32 pb-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#E1F5EE] via-[#cfeede] to-white" />
         <Clouds />
 
-        {/* floating pill nav */}
-        <Navbar />
-
-        <div className="relative mx-auto max-w-6xl px-6 pt-40 pb-32 text-center">
-          <h1 className="mx-auto max-w-5xl text-5xl font-semibold leading-[1.05] tracking-tight text-slate-900 sm:text-6xl md:text-7xl lg:text-[88px]">
-            Sistema App y Web para operar el sector inmobiliario.
-          </h1>
-          <p className="mx-auto mt-10 max-w-2xl text-lg text-slate-800 sm:text-xl">
-            Finanzas, comunicación, seguridad y mantenimientos todo en un mismo
-            lugar con una app intuitiva.
-          </p>
-
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <button className="rounded-full bg-[#6d28d9] px-8 py-4 text-base font-semibold text-white shadow-[0_8px_24px_-8px_rgba(109,40,217,0.6)] transition hover:bg-[#5b21b6]">
-              Inicia Gratis
-            </button>
-            <button className="rounded-full bg-white px-8 py-4 text-base font-semibold text-[#6d28d9] shadow-sm transition hover:bg-slate-50">
-              Quiero información
-            </button>
+        <div className="relative mx-auto max-w-6xl px-6">
+          {/* Tabs */}
+          <div role="tablist" aria-label="Modules" className="mx-auto mb-10 flex w-fit flex-wrap items-center justify-center gap-2 rounded-full bg-white/80 p-2 shadow-md ring-1 ring-white/60 backdrop-blur-md">
+            {(["pro", "property", "facility", "security"] as const).map((id) => {
+              const isActive = activeTab === id;
+              const isPro = id === "pro";
+              return (
+                <button
+                  key={id}
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTab(id)}
+                  onKeyDown={(e) => {
+                    const order: ModuleId[] = ["pro", "property", "facility", "security"];
+                    const i = order.indexOf(id);
+                    if (e.key === "ArrowRight") setActiveTab(order[(i + 1) % 4]);
+                    if (e.key === "ArrowLeft") setActiveTab(order[(i + 3) % 4]);
+                  }}
+                  className={`relative rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                    isActive
+                      ? "bg-[#1D9E75] text-white shadow"
+                      : "text-slate-700 hover:bg-white"
+                  } ${isPro && !isActive ? "ring-2 ring-[#1D9E75]/40" : ""}`}
+                >
+                  {t(`hero_tab_${id}` as CopyKey)}
+                  {isPro && (
+                    <span className="ml-2 hidden rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold tracking-wide sm:inline">
+                      {t("hero_pro_badge")}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="mt-8 flex justify-center">
-            <button className="rounded-full bg-white/70 px-6 py-3 text-sm font-medium text-slate-700 backdrop-blur transition hover:bg-white">
-              ¿Que incluye?
-            </button>
-          </div>
+          <TabPanel id={activeTab} onCta={() => openSignup(activeTab)} />
         </div>
       </section>
 
-      {/* ===== STATS ===== */}
-      <section className="bg-white py-24">
+      {/* ===== SOCIAL PROOF ===== */}
+      <section className="border-y border-slate-100 bg-white py-6">
+        <p className="mx-auto max-w-4xl px-6 text-center text-sm font-medium text-slate-600 sm:text-base">
+          {t("social_proof")}
+        </p>
+      </section>
+
+      {/* ===== FEATURES GRID ===== */}
+      <section id="features" className="bg-white py-24">
         <div className="mx-auto max-w-6xl px-6">
-          <p className="text-center text-lg text-slate-500">
-            Operando a escala real desde 2018
-          </p>
-          <div className="mt-12 grid grid-cols-2 gap-12 md:grid-cols-3">
-            <Stat number="70,000+" label="Estados de Cuenta" />
-            <Stat number="50,000+" label="Usuarios" />
-            <Stat number="125,000+" label="Mantenimientos" />
-            <Stat number="1,800,000+" label="Accesos" />
-            <Stat number="10,000+" label="Puntos / Cashback" />
-            <Stat number="11" label="Países" />
-          </div>
-        </div>
-      </section>
-
-      {/* ===== ¿QUÉ ES KIPERFY? ===== */}
-      <section className="bg-white pb-24">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <h2 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-            <span className="text-[#22c1d6]">¿Qué es Kiperfy?</span>
+          <h2 className="text-center text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+            {t("features_title")}
           </h2>
-          <p className="mt-8 text-xl leading-relaxed text-slate-700 sm:text-2xl">
-            Kiperfy es el sistema / app gratuito que te da Puntos y Cashback por
-            organizar, pagar y operar tu propiedad de forma fácil.
-          </p>
-        </div>
-      </section>
-
-      {/* ===== APP VIEW TOGGLE ===== */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#eef7f1] py-16">
-        <div className="mx-auto flex max-w-6xl justify-center px-6">
-          <div className="inline-flex rounded-full bg-white p-1.5 shadow-md ring-1 ring-slate-200">
-            <button
-              onClick={() => setAppView("mobile")}
-              className={`rounded-full px-8 py-3 text-sm font-semibold transition ${
-                appView === "mobile"
-                  ? "bg-[#ec4899] text-white shadow"
-                  : "text-slate-700"
-              }`}
-            >
-              Mobile App
-            </button>
-            <button
-              onClick={() => setAppView("web")}
-              className={`rounded-full px-8 py-3 text-sm font-semibold transition ${
-                appView === "web"
-                  ? "bg-[#ec4899] text-white shadow"
-                  : "text-slate-700"
-              }`}
-            >
-              Web App
-            </button>
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <FeatureCard icon={<Receipt />} title={t("feature_finance_t")} desc={t("feature_finance_d")} />
+            <FeatureCard icon={<CreditCard />} title={t("feature_payments_t")} desc={t("feature_payments_d")} />
+            <FeatureCard icon={<QrCode />} title={t("feature_access_t")} desc={t("feature_access_d")} />
+            <FeatureCard icon={<Wrench />} title={t("feature_tickets_t")} desc={t("feature_tickets_d")} />
+            <FeatureCard icon={<Boxes />} title={t("feature_assets_t")} desc={t("feature_assets_d")} />
+            <FeatureCard icon={<MessageCircle />} title={t("feature_comms_t")} desc={t("feature_comms_d")} />
+            <FeatureCard icon={<BarChart3 />} title={t("feature_reports_t")} desc={t("feature_reports_d")} />
+            <FeatureCard icon={<Smartphone />} title={t("feature_mobile_t")} desc={t("feature_mobile_d")} />
           </div>
         </div>
       </section>
 
-      {/* ===== 3-COLUMN MODULES ===== */}
-      <section className="bg-white py-20">
-        <div className="mx-auto grid max-w-6xl gap-12 px-6 md:grid-cols-3">
-          <ModuleCol
-            tag="Administración"
-            heading="Lleva todo lo financiero y la comunicación en orden:"
-            items={[
-              "Estados de cuenta y pagos en línea",
-              "Avisos y comunicación con usuarios",
-              "Reservas de áreas comunes",
-              "Reportes fáciles de consultar",
-            ]}
-          />
-          <ModuleCol
-            tag="Seguridad"
-            heading="Controla quién entra y sale de tu propiedad:"
-            items={[
-              "Registro de visitas y accesos",
-              "Códigos QR para entradas",
-              "Control de paquetería",
-              "Notificaciones en tiempo real",
-            ]}
-          />
-          <ModuleCol
-            tag="Mantenimiento"
-            heading="Organiza tareas y da seguimiento sin perder control:"
-            items={[
-              "Reporte y seguimiento de trabajos",
-              "Asignación a proveedores o staff",
-              "Mantenimientos programados",
-              "Control de equipos y áreas",
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* ===== SE ADAPTA ===== */}
-      <section className="bg-white py-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-16 px-6 md:grid-cols-2">
-          <div>
-            <h2 className="text-5xl font-semibold leading-tight tracking-tight sm:text-6xl">
-              Se adapta a tu propiedad
-            </h2>
-            <p className="mt-8 text-lg text-slate-600">
-              No importa el tipo o tamaño, puedes usar solo las funciones que
-              necesites.
-            </p>
-            <div className="mt-10">
-              <button className="rounded-full bg-[#6d28d9] px-8 py-4 text-base font-semibold text-white shadow-[0_8px_24px_-8px_rgba(109,40,217,0.6)] transition hover:bg-[#5b21b6]">
-                Agenda una Demo
-              </button>
-            </div>
-
-            <div className="mt-12 grid grid-cols-2 gap-3">
-              <FeaturePill icon={<Receipt className="h-4 w-4" />} label="Avisos de Cobro" />
-              <FeaturePill icon={<CreditCard className="h-4 w-4" />} label="Pagos con Tarjeta" />
-              <FeaturePill icon={<FileText className="h-4 w-4" />} label="Facturacíon" />
-              <FeaturePill icon={<Gift className="h-4 w-4" />} label="Puntos / Cashback" />
-              <FeaturePill icon={<ClipboardList className="h-4 w-4" />} label="Bitacora digital" />
-              <FeaturePill icon={<Package className="h-4 w-4" />} label="Paqueteria" />
-              <FeaturePill icon={<QrCode className="h-4 w-4" />} label="Visitas con QR" />
-              <FeaturePill icon={<Wrench className="h-4 w-4" />} label="Mantenimientos" />
-              <FeaturePill icon={<Bell className="h-4 w-4" />} label="Solicitudes" />
-              <FeaturePill icon={<FileSpreadsheet className="h-4 w-4" />} label="Reportes" />
-              <div className="col-span-2 flex justify-center">
-                <FeaturePill icon={<MousePointer2 className="h-4 w-4" />} label="y más" />
+      {/* ===== HOW IT WORKS ===== */}
+      <section className="bg-[#E1F5EE]/60 py-24">
+        <div className="mx-auto max-w-5xl px-6">
+          <h2 className="text-center text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+            {t("how_title")}
+          </h2>
+          <div className="mt-14 grid gap-8 md:grid-cols-3">
+            {[t("how_step1"), t("how_step2"), t("how_step3")].map((s, i) => (
+              <div key={i} className="rounded-2xl bg-white p-8 text-center shadow-sm">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#1D9E75] text-lg font-bold text-white">
+                  {i + 1}
+                </div>
+                <p className="mt-5 text-lg font-semibold text-slate-900">{s}</p>
               </div>
-            </div>
+            ))}
           </div>
-
-          <PhoneCollage />
         </div>
       </section>
 
-      {/* ===== TESTIMONIAL ===== */}
-      <section className="bg-white py-32">
-        <div className="mx-auto max-w-5xl px-6 text-center">
-          <blockquote className="text-4xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-5xl md:text-6xl">
-            &ldquo;Me encanta poder ver todo lo que pasa en la propiedad en
-            tiempo real&rdquo;
-          </blockquote>
-          <div className="mt-12 flex flex-col items-center gap-3">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-slate-300 to-slate-500" />
-            <p className="text-base text-slate-700">— Andrés Navarro</p>
+      {/* ===== APP DOWNLOAD ===== */}
+      <section className="bg-white py-24">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            {t("download_title")}
+          </h2>
+          <p className="mt-4 text-base text-slate-600">{t("download_sub")}</p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <StoreBtn label="App Store" sub="Download on the" />
+            <StoreBtn label="Google Play" sub="Get it on" />
+            <StoreBtn label="AppGallery" sub="Explore it on" />
           </div>
         </div>
       </section>
 
       {/* ===== FOOTER ===== */}
       <footer className="bg-slate-900 py-12 text-slate-400">
-        <div className="mx-auto max-w-6xl px-6 text-center text-sm">
-          © {new Date().getFullYear()} Kiperfy. Todos los derechos reservados.
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-6 sm:flex-row sm:justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-[#22c1d6] to-[#3ddc97] text-white">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M6 18V6m0 6l8-6m-8 6l8 6"/></svg>
+            </div>
+            <span className="text-sm font-semibold text-white">Kiperfy</span>
+          </div>
+          <div className="flex items-center gap-5 text-sm">
+            <a href="#" aria-label="WhatsApp" className="hover:text-white"><MessageCircleMore className="h-5 w-5" /></a>
+            <a href="#" aria-label="Instagram" className="hover:text-white"><Instagram className="h-5 w-5" /></a>
+            <a href="#" className="hover:text-white">{t("footer_privacy")}</a>
+            <a href="#" className="hover:text-white">{t("footer_terms")}</a>
+            <div className="relative">
+              <select className="appearance-none rounded-md border border-slate-700 bg-slate-800 py-1.5 pl-3 pr-8 text-xs text-slate-200">
+                <option>México</option><option>USA</option><option>Colombia</option><option>Chile</option><option>Perú</option>
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto mt-8 max-w-6xl px-6 text-center text-xs text-slate-500">
+          © {new Date().getFullYear()} Kiperfy. {t("footer_rights")}
         </div>
       </footer>
+
+      {/* Modals */}
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onSwitchToSignup={() => { setLoginOpen(false); openSignup("pro"); }}
+      />
+      <SignupModal
+        open={signupOpen}
+        onClose={() => setSignupOpen(false)}
+        initialModule={signupModule}
+        onSwitchToLogin={() => { setSignupOpen(false); setLoginOpen(true); }}
+      />
     </div>
   );
 }
 
-/* ---------- subcomponents ---------- */
+/* ============ Subcomponents ============ */
 
-function Navbar() {
+function Navbar({
+  lang,
+  setLang,
+  onLogin,
+  onSignup,
+  scrolled,
+}: {
+  lang: "es" | "en";
+  setLang: (l: "es" | "en") => void;
+  onLogin: () => void;
+  onSignup: () => void;
+  scrolled: boolean;
+}) {
+  const { t } = useLang();
   return (
-    <div className="absolute inset-x-0 top-6 z-20 flex justify-center px-4">
-      <nav className="flex w-full max-w-4xl items-center justify-between rounded-full bg-white/50 px-3 py-2 shadow-lg ring-1 ring-white/60 backdrop-blur-xl">
-        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#22c1d6] to-[#3ddc97] text-white shadow-md">
-          <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 18V6m0 6l8-6m-8 6l8 6" />
-          </svg>
-        </div>
-        <ul className="hidden items-center gap-10 text-[15px] font-medium text-slate-800 md:flex">
-          <li><a href="#features" className="transition hover:text-slate-950">Features</a></li>
-          <li><a href="#benefits" className="transition hover:text-slate-950">Benefits</a></li>
-          <li><a href="#pricing" className="transition hover:text-slate-950">Pricing</a></li>
-          <li><a href="#contact" className="transition hover:text-slate-950">Contact Us</a></li>
-        </ul>
-        <button className="rounded-full bg-[#ec4899] px-6 py-2.5 text-sm font-bold tracking-wide text-white shadow-md transition hover:bg-[#db2777]">
-          LOG IN
-        </button>
-      </nav>
-    </div>
+    <header className={`fixed inset-x-0 top-0 z-50 transition-all ${scrolled ? "py-2" : "py-4"}`}>
+      <div className="mx-auto max-w-6xl px-4">
+        <nav className={`flex items-center justify-between gap-3 rounded-full bg-white/80 px-3 py-2 backdrop-blur-xl transition-all ${scrolled ? "shadow-lg ring-1 ring-slate-200" : "shadow-md ring-1 ring-white/60"}`}>
+          <div className="flex items-center gap-2 pl-1">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#22c1d6] to-[#3ddc97] text-white shadow">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M6 18V6m0 6l8-6m-8 6l8 6"/></svg>
+            </div>
+            <span className="hidden text-sm font-bold text-slate-900 sm:inline">Kiperfy</span>
+          </div>
+
+          <ul className="hidden items-center gap-7 text-sm font-medium text-slate-700 lg:flex">
+            <li><a href="#" className="hover:text-slate-950">{t("nav_home")}</a></li>
+            <li><a href="#features" className="hover:text-slate-950">{t("nav_about")}</a></li>
+            <li><a href="#features" className="hover:text-slate-950">{t("nav_app")}</a></li>
+            <li><a href="#features" className="hover:text-slate-950">{t("nav_cities")}</a></li>
+            <li><a href="#features" className="hover:text-slate-950">{t("nav_download")}</a></li>
+          </ul>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center rounded-full bg-slate-100 p-0.5 text-xs font-bold">
+              {(["es", "en"] as const).map((l) => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  aria-pressed={lang === l}
+                  className={`rounded-full px-3 py-1 uppercase transition ${
+                    lang === l ? "bg-white text-[#0F6E56] shadow-sm" : "text-slate-500"
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+            <button onClick={onLogin} className="hidden rounded-full px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 sm:inline-flex">
+              {t("nav_login")}
+            </button>
+            <button onClick={onSignup} className="rounded-full bg-[#1D9E75] px-4 py-2 text-sm font-bold text-white shadow transition hover:bg-[#0F6E56]">
+              {t("nav_signup")}
+            </button>
+          </div>
+        </nav>
+      </div>
+    </header>
   );
 }
 
 function Clouds() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <Cloud className="left-[5%] top-[30%] h-12 w-32 opacity-90" />
-      <Cloud className="left-[15%] top-[55%] h-10 w-24 opacity-70" />
-      <Cloud className="right-[8%] top-[28%] h-14 w-36 opacity-90" />
-      <Cloud className="right-[18%] top-[60%] h-10 w-28 opacity-75" />
-      <Cloud className="left-[40%] top-[12%] h-8 w-20 opacity-60" />
+      <Cloud className="left-[5%] top-[20%] h-12 w-32 opacity-90" />
+      <Cloud className="left-[15%] top-[60%] h-10 w-24 opacity-70" />
+      <Cloud className="right-[8%] top-[25%] h-14 w-36 opacity-90" />
+      <Cloud className="right-[18%] top-[65%] h-10 w-28 opacity-75" />
+      <Cloud className="left-[42%] top-[8%] h-8 w-20 opacity-60" />
     </div>
   );
 }
@@ -264,84 +287,119 @@ function Cloud({ className = "" }: { className?: string }) {
   );
 }
 
-function Stat({ number, label }: { number: string; label: string }) {
-  return (
-    <div className="text-center">
-      <div className="text-5xl font-semibold tracking-tight text-slate-300 sm:text-6xl">
-        {number}
-      </div>
-      <div className="mt-3 text-lg font-medium text-slate-900">{label}</div>
-    </div>
-  );
-}
+/* ----- Hero tab panel ----- */
+function TabPanel({ id, onCta }: { id: ModuleId; onCta: () => void }) {
+  const { t } = useLang();
+  const [visible, setVisible] = useState(true);
 
-function ModuleCol({
-  tag,
-  heading,
-  items,
-}: {
-  tag: string;
-  heading: string;
-  items: string[];
-}) {
-  return (
-    <div>
-      <div className="mb-6 rounded-md bg-slate-400 py-3 text-center text-2xl font-semibold text-white">
-        {tag}
-      </div>
-      <h3 className="text-2xl font-semibold leading-snug text-slate-900">
-        {heading}
-      </h3>
-      <ul className="mt-6 space-y-3 text-lg text-slate-700">
-        {items.map((it) => (
-          <li key={it} className="flex gap-2">
-            <span className="text-slate-400">•</span>
-            <span>{it}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+  useEffect(() => {
+    setVisible(false);
+    const tm = setTimeout(() => setVisible(true), 50);
+    return () => clearTimeout(tm);
+  }, [id]);
 
-function FeaturePill({ icon, label }: { icon: React.ReactNode; label: string }) {
-  return (
-    <button className="flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-800 shadow-sm transition hover:border-slate-300 hover:shadow">
-      <span className="text-slate-500">{icon}</span>
-      {label}
-    </button>
-  );
-}
+  const title = t(`${id}_title` as CopyKey);
+  const sub = t(`${id}_sub` as CopyKey);
+  const cta = t(`${id}_cta` as CopyKey);
+  const features = [1, 2, 3, 4].map((n) => t(`${id}_f${n}` as CopyKey));
 
-function PhoneCollage() {
-  const phones = [
-    { tilt: -12, bg: "from-[#22c1d6] to-[#3ddc97]", top: "0%", left: "5%" },
-    { tilt: 8, bg: "from-[#3ddc97] to-[#a8eccf]", top: "10%", left: "35%" },
-    { tilt: -6, bg: "from-slate-700 to-slate-900", top: "5%", left: "62%" },
-    { tilt: 14, bg: "from-[#22c1d6] to-[#22d3ee]", top: "45%", left: "20%" },
-    { tilt: -10, bg: "from-[#a8eccf] to-[#22c1d6]", top: "50%", left: "55%" },
-  ];
   return (
-    <div className="relative h-[520px] w-full">
-      {phones.map((p, i) => (
-        <div
-          key={i}
-          className={`absolute h-64 w-36 rounded-[2rem] bg-gradient-to-br ${p.bg} p-2 shadow-2xl ring-1 ring-black/10`}
-          style={{
-            top: p.top,
-            left: p.left,
-            transform: `rotate(${p.tilt}deg)`,
-          }}
-        >
-          <div className="flex h-full w-full flex-col gap-2 rounded-[1.6rem] bg-white/15 p-3 backdrop-blur-sm">
-            <div className="h-2 w-12 rounded-full bg-white/60" />
-            <div className="h-3 w-20 rounded-full bg-white/70" />
-            <div className="mt-2 flex-1 rounded-xl bg-white/30" />
-            <div className="h-8 rounded-lg bg-white/40" />
-            <div className="h-8 rounded-lg bg-white/30" />
-          </div>
+    <div
+      role="tabpanel"
+      className={`grid items-center gap-12 transition-opacity duration-200 md:grid-cols-2 ${visible ? "opacity-100" : "opacity-0"}`}
+    >
+      <div>
+        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+          {title}
+        </h1>
+        <p className="mt-5 text-lg text-slate-700">{sub}</p>
+        <ul className="mt-7 grid grid-cols-2 gap-3">
+          {features.map((f) => (
+            <li key={f} className="flex items-start gap-2 text-sm font-medium text-slate-800">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1D9E75]" />
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+        <div className="mt-9 flex flex-wrap items-center gap-3">
+          <button
+            onClick={onCta}
+            className="rounded-full bg-[#1D9E75] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#1D9E75]/30 transition hover:bg-[#0F6E56]"
+          >
+            {cta}
+          </button>
+          <button className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[#0F6E56] shadow-sm ring-1 ring-slate-200 transition hover:bg-slate-50">
+            {t("nav_login")}
+          </button>
         </div>
-      ))}
+      </div>
+
+      <MockupCard id={id} />
     </div>
+  );
+}
+
+function MockupCard({ id }: { id: ModuleId }) {
+  const gradient: Record<ModuleId, string> = {
+    pro: "from-[#1D9E75] to-[#0F6E56]",
+    property: "from-[#22c1d6] to-[#3ddc97]",
+    facility: "from-[#f59e0b] to-[#ef4444]",
+    security: "from-[#6366f1] to-[#0f172a]",
+  };
+  const Icon = id === "pro" ? Gift : id === "property" ? Receipt : id === "facility" ? Wrench : QrCode;
+
+  return (
+    <div className="relative flex aspect-[4/5] w-full max-w-md justify-self-center">
+      <div className={`absolute inset-0 rounded-[2.5rem] bg-gradient-to-br ${gradient[id]} shadow-2xl ring-1 ring-black/5`} />
+      <div className="relative m-3 flex w-full flex-col rounded-[2rem] bg-white/15 p-5 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/30 text-white">
+              <Icon className="h-5 w-5" />
+            </div>
+            <span className="text-sm font-bold text-white capitalize">{id}</span>
+          </div>
+          <Bell className="h-5 w-5 text-white/80" />
+        </div>
+        <div className="mt-4 space-y-2">
+          <div className="h-3 w-3/4 rounded-full bg-white/70" />
+          <div className="h-3 w-1/2 rounded-full bg-white/50" />
+        </div>
+        <div className="mt-5 grid flex-1 grid-cols-2 gap-3">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="rounded-2xl bg-white/25 p-3">
+              <div className="h-6 w-6 rounded-lg bg-white/60" />
+              <div className="mt-3 h-2 w-3/4 rounded-full bg-white/70" />
+              <div className="mt-1.5 h-2 w-1/2 rounded-full bg-white/40" />
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 h-10 rounded-xl bg-white/80" />
+      </div>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <div className="group rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-[#1D9E75]/40 hover:shadow-lg">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#E1F5EE] text-[#0F6E56] transition group-hover:bg-[#1D9E75] group-hover:text-white [&_svg]:h-5 [&_svg]:w-5">
+        {icon}
+      </div>
+      <h3 className="mt-4 text-base font-bold text-slate-900">{title}</h3>
+      <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{desc}</p>
+    </div>
+  );
+}
+
+function StoreBtn({ label, sub }: { label: string; sub: string }) {
+  return (
+    <button className="flex items-center gap-3 rounded-xl bg-slate-900 px-5 py-3 text-left text-white transition hover:bg-slate-800">
+      <Smartphone className="h-6 w-6" />
+      <div>
+        <div className="text-[10px] uppercase tracking-wide text-slate-300">{sub}</div>
+        <div className="text-sm font-bold">{label}</div>
+      </div>
+    </button>
   );
 }
