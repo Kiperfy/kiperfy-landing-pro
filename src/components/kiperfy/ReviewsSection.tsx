@@ -1,0 +1,95 @@
+import { useCallback, useEffect, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLang } from "@/hooks/use-lang";
+import { useInView } from "@/hooks/use-in-view";
+import { FEATURED_REVIEW_INDEX, REVIEWS, type Review } from "@/lib/kiperfy-reviews";
+
+const AUTO_ADVANCE_MS = 3000;
+
+function FeaturedReview({
+  review,
+  lang,
+  slideDirection,
+  onPrev,
+  onNext,
+}: {
+  review: Review;
+  lang: "es" | "en";
+  slideDirection: "next" | "prev";
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const quote = review.quote[lang];
+
+  return (
+    <div className="relative mx-auto max-w-3xl px-14 sm:px-16">
+      <button
+        type="button"
+        onClick={onPrev}
+        aria-label="Previous review"
+        className="absolute left-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-kiperfy-button/30 text-kiperfy-grey transition hover:border-kiperfy-cyan hover:text-kiperfy-cyan"
+      >
+        <ChevronLeft className="h-5 w-5" />
+      </button>
+      <button
+        type="button"
+        onClick={onNext}
+        aria-label="Next review"
+        className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-kiperfy-button/30 text-kiperfy-grey transition hover:border-kiperfy-cyan hover:text-kiperfy-cyan"
+      >
+        <ChevronRight className="h-5 w-5" />
+      </button>
+
+      <figure
+        key={review.id}
+        className={`review-carousel-slide review-carousel-slide--${slideDirection} text-center`}
+      >
+        <blockquote className="text-2xl font-bold leading-snug tracking-tight text-kiperfy-text sm:text-3xl lg:text-4xl">
+          “{quote}”
+        </blockquote>
+        <figcaption className="mt-8">
+          <p className="text-sm font-medium text-kiperfy-grey">— {review.name}</p>
+        </figcaption>
+      </figure>
+    </div>
+  );
+}
+
+export function ReviewsSection() {
+  const { lang } = useLang();
+  const { ref, inView } = useInView<HTMLElement>();
+  const [activeIndex, setActiveIndex] = useState(FEATURED_REVIEW_INDEX);
+  const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
+
+  const go = useCallback((delta: number) => {
+    setSlideDirection(delta > 0 ? "next" : "prev");
+    setActiveIndex((i) => (i + delta + REVIEWS.length) % REVIEWS.length);
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+    const id = window.setInterval(() => go(1), AUTO_ADVANCE_MS);
+    return () => window.clearInterval(id);
+  }, [inView, go]);
+
+  const active = REVIEWS[activeIndex];
+
+  return (
+    <section
+      ref={ref}
+      className={`reviews-section bg-white py-20 sm:py-24 ${inView ? "reviews-section--visible" : ""}`}
+    >
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="metric-item">
+          <FeaturedReview
+            review={active}
+            lang={lang}
+            slideDirection={slideDirection}
+            onPrev={() => go(-1)}
+            onNext={() => go(1)}
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
