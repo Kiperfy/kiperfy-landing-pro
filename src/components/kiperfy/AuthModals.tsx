@@ -194,8 +194,13 @@ export function LoginModal({
         <div className="space-y-3">
           <TextInput type="email" placeholder={t("login_email_ph")} value={email} onChange={(e) => setEmail(e.target.value)} />
           <PasswordInput placeholder={t("login_password_ph")} showLabel={t("show_password")} value={pass} onChange={setPass} />
-          <div className="text-right">
-            <a href="#" className="text-xs font-medium text-kiperfy-cyan hover:underline">{t("login_forgot")}</a>
+          <div className="flex items-center justify-between gap-3">
+            <a href="#" className="text-xs font-medium text-kiperfy-cyan hover:underline">
+              {t("login_terms")}
+            </a>
+            <a href="#" className="text-xs font-medium text-kiperfy-cyan hover:underline">
+              {t("login_forgot")}
+            </a>
           </div>
         </div>
         <button className="h-12 w-full rounded-xl bg-kiperfy-button text-sm font-semibold text-white shadow-md transition hover:bg-kiperfy-grey">
@@ -238,10 +243,12 @@ export function SignupModal({
   const [units, setUnits] = useState("");
   const [phone, setPhone] = useState("");
   const [birthdate, setBirthdate] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSelectedPlan(initialModule);
+      setTermsAccepted(false);
     }
   }, [open, initialModule]);
 
@@ -306,7 +313,30 @@ export function SignupModal({
           </div>
         </FormField>
 
-        <button type="button" className="h-12 w-full rounded-xl bg-kiperfy-button text-sm font-semibold text-white shadow-md transition hover:bg-kiperfy-grey">
+        <label className="flex cursor-pointer items-start gap-2.5 text-sm leading-snug text-kiperfy-grey">
+          <input
+            type="checkbox"
+            checked={termsAccepted}
+            onChange={(e) => setTermsAccepted(e.target.checked)}
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-kiperfy-button/40 text-kiperfy-green accent-kiperfy-green focus:ring-kiperfy-green/25"
+          />
+          <span>
+            {t("signup_terms_prefix")}{" "}
+            <a
+              href="#"
+              className="font-medium text-kiperfy-cyan hover:underline"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {t("login_terms")}
+            </a>
+          </span>
+        </label>
+
+        <button
+          type="button"
+          disabled={!termsAccepted}
+          className="h-12 w-full rounded-xl bg-kiperfy-button text-sm font-semibold text-white shadow-md transition hover:bg-kiperfy-grey disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {t("signup_step3_cta")}
         </button>
         <p className="text-center text-xs text-kiperfy-text/30">{t("signup_step3_fineprint")}</p>

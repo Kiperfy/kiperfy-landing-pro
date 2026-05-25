@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useLang } from "@/hooks/use-lang";
+import { STORE_LINKS } from "@/lib/store-links";
 import { useInView } from "@/hooks/use-in-view";
 import { FEATURED_REVIEW_INDEX, REVIEWS, type Review } from "@/lib/kiperfy-reviews";
 
@@ -76,6 +77,7 @@ export function ReviewsSection() {
 
   return (
     <section
+      id="app"
       ref={ref}
       className={`reviews-section bg-white py-20 sm:py-24 ${inView ? "reviews-section--visible" : ""}`}
     >
@@ -93,7 +95,12 @@ export function ReviewsSection() {
             {t("reviews_rating_subtitle")}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
-            <a href="#" aria-label={t("reviews_app_store_alt")}>
+            <a
+              href={STORE_LINKS.appStore}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t("reviews_app_store_alt")}
+            >
               <img
                 src="/badge-app-store.png"
                 alt={t("reviews_app_store_alt")}
@@ -102,7 +109,12 @@ export function ReviewsSection() {
                 height={48}
               />
             </a>
-            <a href="#" aria-label={t("reviews_google_play_alt")}>
+            <a
+              href={STORE_LINKS.googlePlay}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t("reviews_google_play_alt")}
+            >
               <img
                 src="/badge-google-play.png"
                 alt={t("reviews_google_play_alt")}

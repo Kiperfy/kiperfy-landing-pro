@@ -72,6 +72,15 @@
   --color-kiperfy-chart-purple: #ba45ff;
   --color-kiperfy-chart-yellow: #ffe04a;
   --color-kiperfy-chat-cyan: #2cd8e0;
+  --animate-hero-spotlight-in: hero-spotlight-in 2.4s ease 0.2s 1 forwards;
+  --animate-hero-spotlight-in-delayed: hero-spotlight-in 2.8s ease 0.5s 1 forwards;
+  --animate-hero-spotlight-drift: hero-spotlight-drift 34s ease-in-out infinite alternate;
+  --animate-hero-spotlight-drift-alt: hero-spotlight-drift-alt 38s ease-in-out infinite alternate;
+  --animate-hero-ambient-breathe: hero-ambient-breathe 26s ease-in-out infinite alternate;
+  --animate-hero-radial-shift: hero-radial-shift 30s ease-in-out infinite alternate;
+  --animate-hero-grid-pulse: hero-grid-pulse 22s ease-in-out infinite alternate;
+  --animate-hero-toast-in: hero-toast-in 1.2s ease forwards;
+  --animate-hero-toast-float: hero-toast-float 9s ease-in-out infinite alternate;
 }
 
 :root {
@@ -210,4 +219,191 @@
 
 .review-carousel-slide--prev {
   animation: review-slide-prev 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Hero spotlight — inspired by Aceternity UI, CSS-only for performance */
+@keyframes hero-spotlight-in {
+  0% {
+    opacity: 0;
+    transform: translate(-6%, -4%) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes hero-spotlight-drift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(2.5%, 1.5%);
+  }
+}
+
+@keyframes hero-spotlight-drift-alt {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-2.5%, 2%);
+  }
+}
+
+@keyframes hero-ambient-breathe {
+  0%,
+  100% {
+    opacity: 0.82;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-radial-shift {
+  0% {
+    opacity: 0.75;
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    opacity: 0.95;
+    transform: scale(1.015) translate(1%, 0.5%);
+  }
+}
+
+@keyframes hero-grid-pulse {
+  0%,
+  100% {
+    opacity: 0.38;
+  }
+  50% {
+    opacity: 0.52;
+  }
+}
+
+/* Soft infrastructure grid — masked so it fades at edges */
+.hero-grid-texture {
+  background-image:
+    linear-gradient(to right, rgba(0, 207, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 207, 255, 0.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 88% 78% at 50% 36%, #000 15%, transparent 74%);
+  -webkit-mask-image: radial-gradient(ellipse 88% 78% at 50% 36%, #000 15%, transparent 74%);
+}
+
+@media (max-width: 767px) {
+  .hero-grid-texture {
+    background-size: 36px 36px;
+    mask-image: radial-gradient(ellipse 95% 80% at 50% 32%, #000 10%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse 95% 80% at 50% 32%, #000 10%, transparent 78%);
+  }
+}
+
+@keyframes hero-toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 0.92;
+    transform: translateY(0);
+  }
+}
+
+/* Hero load — soft dissolve / stagger */
+@keyframes hero-dissolve-up {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-enter {
+  opacity: 0;
+  animation: hero-dissolve-up 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-enter-1 {
+  animation-delay: 0.08s;
+}
+.hero-enter-2 {
+  animation-delay: 0.2s;
+}
+.hero-enter-3 {
+  animation-delay: 0.32s;
+}
+.hero-enter-4 {
+  animation-delay: 0.44s;
+}
+.hero-enter-5 {
+  animation-delay: 0.56s;
+}
+.hero-enter-6 {
+  animation-delay: 0.36s;
+}
+
+/* Hero headline — line-by-line dissolve */
+@keyframes hero-title-line {
+  0% {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-title-line {
+  display: block;
+  opacity: 0;
+  animation: hero-title-line 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.hero-title-line-0 {
+  animation-delay: 0.06s;
+}
+.hero-title-line-1 {
+  animation-delay: 0.2s;
+}
+.hero-title-line-2 {
+  animation-delay: 0.34s;
+}
+
+@keyframes hero-toast-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-spotlight-in,
+  .animate-hero-spotlight-in-delayed,
+  .animate-hero-spotlight-drift,
+  .animate-hero-spotlight-drift-alt,
+  .animate-hero-ambient-breathe,
+  .animate-hero-radial-shift,
+  .animate-hero-grid-pulse,
+  .animate-hero-toast-in,
+  .animate-hero-toast-float,
+  .hero-enter,
+  .hero-title-line {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-grid-texture {
+    opacity: 0.45 !important;
+  }
 }
