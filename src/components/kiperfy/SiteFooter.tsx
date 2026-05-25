@@ -32,16 +32,15 @@ export function SiteFooter() {
   ];
 
   return (
-    <section className="bg-white px-4 pb-10 pt-10 sm:px-6 sm:pb-12">
+    <section className="bg-white px-4 sm:px-6">
       <footer className="relative overflow-hidden rounded-[2rem] bg-[#232628] text-white shadow-2xl sm:rounded-[2.5rem]">
         <FooterPattern />
 
-        <div className="relative z-10 mx-auto max-w-6xl px-6 py-12 sm:px-10 sm:py-14">
-          <div className="grid gap-10 sm:grid-cols-2 lg:gap-16">
-            {/* Contact + stores + social */}
+        <div className="relative z-10 mx-auto max-w-6xl px-6 pt-6 pb-5 sm:px-10 md:pt-8 md:pb-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
             <div>
               <h3 className="text-lg font-bold text-white">{t("footer_contact")}</h3>
-              <address className="mt-4 space-y-1.5 text-sm not-italic leading-relaxed text-white/70">
+              <address className="mt-3 space-y-1 not-italic text-[13px] leading-relaxed text-white/70">
                 <p>{t("footer_address")}</p>
                 <p>
                   <a href={`tel:${t("footer_phone").replace(/\s/g, "")}`} className="hover:text-white">
@@ -55,7 +54,7 @@ export function SiteFooter() {
                 </p>
               </address>
 
-              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] font-medium">
                 <a
                   href={STORE_LINKS.appStore}
                   target="_blank"
@@ -74,40 +73,39 @@ export function SiteFooter() {
                 </a>
               </div>
 
-              <div className="mt-6 flex items-center gap-4">
+              <div className="mt-4 flex items-center gap-3">
                 <a
                   href="#"
                   aria-label={t("footer_social_whatsapp")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-kiperfy-cyan/40 hover:bg-white/10 hover:text-white"
+                  className="text-white/80 transition hover:text-white"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-[18px] w-[18px]" strokeWidth={1.75} />
                 </a>
                 <a
                   href="#"
                   aria-label={t("footer_social_instagram")}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-kiperfy-cyan/40 hover:bg-white/10 hover:text-white"
+                  className="text-white/80 transition hover:text-white"
                 >
-                  <Instagram className="h-5 w-5" />
+                  <Instagram className="h-[18px] w-[18px]" strokeWidth={1.75} />
                 </a>
               </div>
             </div>
 
-            {/* Links */}
-            <div className="sm:text-right">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-2 sm:ml-auto sm:max-w-xs">
-                <ul className="space-y-2">
+            <div className="max-md:mt-0 sm:text-right">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 sm:ml-auto sm:max-w-xs">
+                <ul className="space-y-1.5">
                   {navCol1.map((item) => (
                     <li key={item.href}>
-                      <a href={item.href} className="text-sm text-white/70 transition hover:text-white">
+                      <a href={item.href} className="text-[13px] text-white/70 transition hover:text-white">
                         {item.label}
                       </a>
                     </li>
                   ))}
                 </ul>
-                <ul className="space-y-2">
+                <ul className="space-y-1.5">
                   {navCol2.map((item) => (
                     <li key={item.label}>
-                      <a href={item.href} className="text-sm text-white/70 transition hover:text-white">
+                      <a href={item.href} className="text-[13px] text-white/70 transition hover:text-white">
                         {item.label}
                       </a>
                     </li>
@@ -117,7 +115,7 @@ export function SiteFooter() {
             </div>
           </div>
 
-          <p className="mt-10 border-t border-white/10 pt-6 text-center text-xs leading-relaxed text-white/50 sm:text-right">
+          <p className="mt-6 border-t border-white/10 pt-4 text-center text-[13px] leading-relaxed text-white/50 sm:text-right">
             <a href="#" className="transition hover:text-white/80">
               {t("footer_cookies")}
             </a>

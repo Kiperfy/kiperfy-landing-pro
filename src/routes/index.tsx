@@ -1,12 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Check } from "lucide-react";
 import { useLang } from "@/hooks/use-lang";
 import type { CopyKey } from "@/lib/kiperfy-copy";
 import { LoginModal, SignupModal, type ModuleId } from "@/components/kiperfy/AuthModals";
 import { MetricsSection } from "@/components/kiperfy/MetricsSection";
 import { PreviewSection } from "@/components/kiperfy/PreviewSection";
 import { ModuleFeaturesSection } from "@/components/kiperfy/ModuleFeaturesSection";
+import { TeamEarnsSection } from "@/components/kiperfy/TeamEarnsSection";
+import { PricingSection } from "@/components/kiperfy/PricingSection";
+import { LeadQualificationSection } from "@/components/kiperfy/LeadQualificationSection";
 import { ReviewsSection } from "@/components/kiperfy/ReviewsSection";
 import { HeroSpotlight } from "@/components/kiperfy/HeroSpotlight";
 import { HeroProductMedia } from "@/components/kiperfy/HeroProductMedia";
@@ -20,7 +22,24 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t, lang, setLang } = useLang();
-  const [activeTab, setActiveTab] = useState<ModuleId>("pro");
+  const [activeTab, setActiveTab] = useState<ModuleId>(() => {
+    if (typeof window === "undefined") return "pro";
+    const saved = localStorage.getItem("kiperfy_active_tab") as ModuleId | null;
+    if (saved === "pro" || saved === "property" || saved === "facility" || saved === "security") return saved;
+    return "pro";
+  });
+
+  const [tabTitleLocked, setTabTitleLocked] = useState(false);
+
+  const setActiveTabPersisted = (id: ModuleId) => {
+    setTabTitleLocked(true);
+    setActiveTab(id);
+    try {
+      localStorage.setItem("kiperfy_active_tab", id);
+    } catch {
+      /* ignore */
+    }
+  };
   const [loginOpen, setLoginOpen] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
   const [signupModule, setSignupModule] = useState<ModuleId>("pro");
@@ -48,7 +67,7 @@ function Index() {
       />
 
       {/* ===== HERO ===== */}
-      <section id="hero" className="relative overflow-hidden pt-32 pb-20">
+      <section id="hero" className="relative overflow-hidden pt-32 pb-12 md:pb-20">
         <div className="absolute inset-0 bg-gradient-to-b from-kiperfy-cyan/10 via-kiperfy-green/15 to-white" />
         <Clouds />
 
@@ -67,12 +86,12 @@ function Index() {
                   key={id}
                   role="tab"
                   aria-selected={isActive}
-                  onClick={() => setActiveTab(id)}
+                  onClick={() => setActiveTabPersisted(id)}
                   onKeyDown={(e) => {
                     const order: ModuleId[] = ["pro", "property", "facility", "security"];
                     const i = order.indexOf(id);
-                    if (e.key === "ArrowRight") setActiveTab(order[(i + 1) % 4]);
-                    if (e.key === "ArrowLeft") setActiveTab(order[(i + 3) % 4]);
+                    if (e.key === "ArrowRight") setActiveTabPersisted(order[(i + 1) % 4]);
+                    if (e.key === "ArrowLeft") setActiveTabPersisted(order[(i + 3) % 4]);
                   }}
                   className={`relative rounded-full px-5 py-2.5 text-sm font-semibold transition ${
                     isActive
@@ -104,16 +123,18 @@ function Index() {
         </div>
       </section>
 
-      {/* ===== METRICS ===== */}
       <MetricsSection />
 
-      {/* ===== FEATURES (synced with hero tab) ===== */}
-      <ModuleFeaturesSection moduleId={activeTab} />
+      <TeamEarnsSection />
 
-      {/* ===== APP PREVIEW ===== */}
+      <ModuleFeaturesSection activeTab={activeTab} tabTitleLocked={tabTitleLocked} />
+
+      <PricingSection onSignup={(m) => openSignup(m)} />
+
+      <LeadQualificationSection />
+
       <PreviewSection />
 
-      {/* ===== REVIEWS ===== */}
       <ReviewsSection />
 
       <SiteFooter />
@@ -270,8 +291,6 @@ function TabPanel({ id, onCta, onLogin }: { id: ModuleId; onCta: () => void; onL
   const heading = t(`${id}_heading` as CopyKey);
   const hook = t(`${id}_hook` as CopyKey);
   const sub = t(`${id}_sub` as CopyKey);
-  const cta = t(`${id}_cta` as CopyKey);
-  const features = [1, 2, 3, 4].map((n) => t(`${id}_f${n}` as CopyKey));
 
   return (
     <div key={id} role="tabpanel" className="grid items-center gap-12 md:grid-cols-2">
@@ -287,36 +306,27 @@ function TabPanel({ id, onCta, onLogin }: { id: ModuleId; onCta: () => void; onL
         >
           {sub}
         </p>
-        <ul
-          className={`hero-enter ${heading ? "hero-enter-4" : "hero-enter-3"} mt-8 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3`}
-        >
-          {features.map((f) => (
-            <li key={f} className="flex items-start gap-2 text-sm font-medium text-kiperfy-text sm:text-[0.9375rem]">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-kiperfy-green" />
-              <span>{f}</span>
-            </li>
-          ))}
-        </ul>
-        <div
-          className={`hero-enter ${heading ? "hero-enter-5" : "hero-enter-4"} mt-9 flex flex-wrap items-center gap-3`}
-        >
-          <button
-            onClick={onCta}
-            className="rounded-full bg-kiperfy-button px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-kiperfy-button/30 transition hover:bg-kiperfy-grey"
-          >
-            {cta}
-          </button>
-          <button
-            type="button"
-            onClick={onLogin}
-            className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-kiperfy-purple shadow-sm ring-1 ring-kiperfy-button/30 transition hover:bg-kiperfy-purple/10"
-          >
-            {t("nav_login")}
-          </button>
+        <div className={`hero-enter ${heading ? "hero-enter-4" : "hero-enter-3"} mt-9`}>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={onCta}
+              className="rounded-full bg-kiperfy-button px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-kiperfy-button/30 transition hover:bg-kiperfy-grey"
+            >
+              {t("hero_cta")}
+            </button>
+            <button
+              type="button"
+              onClick={onLogin}
+              className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-kiperfy-purple shadow-sm ring-1 ring-kiperfy-button/30 transition hover:bg-kiperfy-purple/10"
+            >
+              {t("nav_login")}
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-kiperfy-grey sm:text-sm">{t("hero_cta_fineprint")}</p>
         </div>
       </div>
 
-      <div className={`hero-enter ${heading ? "hero-enter-6" : "hero-enter-5"}`}>
+      <div className={`hero-enter ${heading ? "hero-enter-5" : "hero-enter-4"}`}>
         <HeroProductMedia />
       </div>
     </div>
