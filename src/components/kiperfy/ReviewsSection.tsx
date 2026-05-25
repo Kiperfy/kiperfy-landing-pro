@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { useLang } from "@/hooks/use-lang";
 import { useInView } from "@/hooks/use-in-view";
 import { FEATURED_REVIEW_INDEX, REVIEWS, type Review } from "@/lib/kiperfy-reviews";
@@ -56,7 +56,7 @@ function FeaturedReview({
 }
 
 export function ReviewsSection() {
-  const { lang } = useLang();
+  const { t, lang } = useLang();
   const { ref, inView } = useInView<HTMLElement>();
   const [activeIndex, setActiveIndex] = useState(FEATURED_REVIEW_INDEX);
   const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
@@ -80,6 +80,39 @@ export function ReviewsSection() {
       className={`reviews-section bg-white py-20 sm:py-24 ${inView ? "reviews-section--visible" : ""}`}
     >
       <div className="mx-auto max-w-6xl px-6">
+        <div className="metric-item mb-14 text-center">
+          <p className="text-4xl font-bold tracking-tight text-kiperfy-text sm:text-5xl">
+            {t("reviews_rating_score")}
+          </p>
+          <div className="mt-4 flex items-center justify-center gap-1" aria-hidden>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star key={i} className="h-6 w-6 fill-kiperfy-chart-yellow text-kiperfy-chart-yellow sm:h-7 sm:w-7" />
+            ))}
+          </div>
+          <p className="mt-4 text-base font-medium text-kiperfy-grey sm:text-lg">
+            {t("reviews_rating_subtitle")}
+          </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+            <a href="#" aria-label={t("reviews_app_store_alt")}>
+              <img
+                src="/badge-app-store.png"
+                alt={t("reviews_app_store_alt")}
+                className="h-12 w-auto"
+                width={156}
+                height={48}
+              />
+            </a>
+            <a href="#" aria-label={t("reviews_google_play_alt")}>
+              <img
+                src="/badge-google-play.png"
+                alt={t("reviews_google_play_alt")}
+                className="h-12 w-auto"
+                width={156}
+                height={48}
+              />
+            </a>
+          </div>
+        </div>
         <div className="metric-item">
           <FeaturedReview
             review={active}

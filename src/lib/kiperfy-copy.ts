@@ -16,32 +16,43 @@ export const copy = {
     hero_tab_security: "Seguridad",
     hero_pro_badge: "Más completo",
 
-    pro_title: "La solución todo-en-uno para tu propiedad",
-    pro_sub: "Combina Property, Facility y Security en una sola plataforma.",
+    pro_heading: "",
+    pro_hook: "¿Sigues operando tu propiedad con WhatsApp, Excel y sistemas desconectados?",
+    pro_sub:
+      "Kiperfy PRO centraliza administración, mantenimiento, seguridad, comunicación y recompensas en una sola plataforma inteligente para propiedades modernas.",
     pro_f1: "Administración financiera",
     pro_f2: "Gestión de activos",
     pro_f3: "Control de accesos",
     pro_f4: "Comunidad digital",
     pro_cta: "Inicia con Pro gratis",
 
-    property_title: "Administra tu propiedad sin complicaciones",
-    property_sub: "Control financiero, expedientes y pagos en línea.",
+    property_heading: "",
+    property_hook:
+      "¿Frustrado por pagos atrasados, procesos manuales y comunicación interminable con usuarios?",
+    property_sub:
+      "Kiperfy Property Management simplifica cobranza, comunicación, estados de cuenta y operación diaria desde una sola plataforma centralizada.",
     property_f1: "Ingresos y egresos",
     property_f2: "Expedientes por unidad",
     property_f3: "Pagos en línea",
     property_f4: "Avisos",
     property_cta: "Prueba Property gratis",
 
-    facility_title: "Operación y mantenimiento bajo control",
-    facility_sub: "Registra activos, gestiona tickets y da seguimiento con QR.",
+    facility_heading: "",
+    facility_hook:
+      "¿Sigues administrando mantenimientos, equipos y órdenes de trabajo entre llamadas, chats y Excel?",
+    facility_sub:
+      "Kiperfy Facility Management centraliza mantenimientos, tareas preventivas, seguimiento de equipos y órdenes de trabajo con visibilidad en tiempo real.",
     facility_f1: "Activos con QR",
     facility_f2: "Tickets de mantenimiento",
     facility_f3: "Calendario",
     facility_f4: "Reportes",
     facility_cta: "Prueba Facility gratis",
 
-    security_title: "Seguridad digital para tu acceso",
-    security_sub: "Controla quién entra y sale con QR y accesos digitales.",
+    security_heading: "",
+    security_hook:
+      "¿Sigues operando la seguridad de tu propiedad con accesos desconectados y registros manuales?",
+    security_sub:
+      "Kiperfy Security Management centraliza control de accesos, visitantes, QR, alertas y operación de seguridad en una sola plataforma conectada.",
     security_f1: "Control de accesos QR",
     security_f2: "Registro de visitas",
     security_f3: "Alertas en tiempo real",
@@ -73,6 +84,11 @@ export const copy = {
     preview_web: "App web",
     preview_mobile_alt: "Kiperfy en smartphone mostrando ocupación y pagos de unidades",
     preview_web_alt: "Kiperfy en laptop con panel de administración y reportes",
+
+    reviews_rating_score: "4.7/5",
+    reviews_rating_subtitle: "Ranking en App store y Google Play store",
+    reviews_app_store_alt: "Descargar en App Store",
+    reviews_google_play_alt: "Disponible en Google Play",
 
     how_title: "Empieza en minutos",
     how_step1: "Crea tu propiedad",
@@ -170,32 +186,44 @@ export const copy = {
     hero_tab_security: "Security",
     hero_pro_badge: "Most complete",
 
-    pro_title: "The all-in-one solution for your property",
-    pro_sub: "Combine Property, Facility and Security in one platform.",
+    pro_heading: "",
+    pro_hook:
+      "Still operating your property through WhatsApp, spreadsheets and disconnected systems?",
+    pro_sub:
+      "Kiperfy PRO centralizes property management, maintenance, security, communication and rewards into one intelligent platform built for modern properties.",
     pro_f1: "Financial management",
     pro_f2: "Asset management",
     pro_f3: "Access control",
     pro_f4: "Digital community",
     pro_cta: "Start with Pro free",
 
-    property_title: "Manage your property effortlessly",
-    property_sub: "Financial control, records and online payments.",
+    property_heading: "",
+    property_hook:
+      "Frustrated with delayed payments, manual processes and endless resident communication?",
+    property_sub:
+      "Kiperfy Property Management simplifies collections, communication, account statements and daily operations in one centralized platform.",
     property_f1: "Income & expenses",
     property_f2: "Unit records",
     property_f3: "Online payments",
     property_f4: "Announcements",
     property_cta: "Try Property free",
 
-    facility_title: "Operations and maintenance under control",
-    facility_sub: "Track assets, manage tickets and follow up with QR codes.",
+    facility_heading: "",
+    facility_hook:
+      "Still managing maintenance, equipment and work orders through calls, chats and spreadsheets?",
+    facility_sub:
+      "Kiperfy Facility Management centralizes maintenance operations, preventive tasks, equipment tracking and work orders with real-time visibility.",
     facility_f1: "QR-tagged assets",
     facility_f2: "Maintenance tickets",
     facility_f3: "Service calendar",
     facility_f4: "Reports",
     facility_cta: "Try Facility free",
 
-    security_title: "Digital security for your access points",
-    security_sub: "Control who enters and exits with QR codes and digital access.",
+    security_heading: "",
+    security_hook:
+      "Still operating property security with disconnected access systems and manual visitor logs?",
+    security_sub:
+      "Kiperfy Security Management centralizes access control, visitor management, QR access, alerts and security operations into one connected platform.",
     security_f1: "QR access control",
     security_f2: "Visitor log",
     security_f3: "Real-time alerts",
@@ -227,6 +255,11 @@ export const copy = {
     preview_web: "Web App",
     preview_mobile_alt: "Kiperfy on a smartphone showing unit occupancy and payments",
     preview_web_alt: "Kiperfy on a laptop with the admin dashboard and reports",
+
+    reviews_rating_score: "4.7/5",
+    reviews_rating_subtitle: "Rating on App Store and Google Play",
+    reviews_app_store_alt: "Download on the App Store",
+    reviews_google_play_alt: "Get it on Google Play",
 
     how_title: "Get started in minutes",
     how_step1: "Create your property",

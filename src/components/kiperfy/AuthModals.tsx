@@ -178,9 +178,13 @@ export function LoginModal({
   return (
     <ModalShell open={open} onClose={onClose} labelledBy="login-title">
       <CloseBtn onClose={onClose} label={t("modal_close")} />
-      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-kiperfy-cyan to-kiperfy-green text-white">
-        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><path d="M6 18V6m0 6l8-6m-8 6l8 6"/></svg>
-      </div>
+      <img
+        src="/kiperfy-logo.png"
+        alt="Kiperfy"
+        width={48}
+        height={48}
+        className="mx-auto mb-5 h-12 w-12 rounded-xl"
+      />
       <h2 id="login-title" className="text-center text-2xl font-semibold text-kiperfy-text">{t("login_headline")}</h2>
       <p className="mt-1 text-center text-sm text-kiperfy-grey">{t("login_sub")}</p>
 

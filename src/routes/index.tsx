@@ -93,7 +93,11 @@ function Index() {
             })}
           </div>
 
-          <TabPanel id={activeTab} onCta={() => openSignup(activeTab)} />
+          <TabPanel
+            id={activeTab}
+            onCta={() => openSignup(activeTab)}
+            onLogin={() => setLoginOpen(true)}
+          />
         </div>
       </section>
 
@@ -277,7 +281,7 @@ function Cloud({ className = "" }: { className?: string }) {
 }
 
 /* ----- Hero tab panel ----- */
-function TabPanel({ id, onCta }: { id: ModuleId; onCta: () => void }) {
+function TabPanel({ id, onCta, onLogin }: { id: ModuleId; onCta: () => void; onLogin: () => void }) {
   const { t } = useLang();
   const [visible, setVisible] = useState(true);
 
@@ -287,7 +291,8 @@ function TabPanel({ id, onCta }: { id: ModuleId; onCta: () => void }) {
     return () => clearTimeout(tm);
   }, [id]);
 
-  const title = t(`${id}_title` as CopyKey);
+  const heading = t(`${id}_heading` as CopyKey);
+  const hook = t(`${id}_hook` as CopyKey);
   const sub = t(`${id}_sub` as CopyKey);
   const cta = t(`${id}_cta` as CopyKey);
   const features = [1, 2, 3, 4].map((n) => t(`${id}_f${n}` as CopyKey));
@@ -298,10 +303,13 @@ function TabPanel({ id, onCta }: { id: ModuleId; onCta: () => void }) {
       className={`grid items-center gap-12 transition-opacity duration-200 md:grid-cols-2 ${visible ? "opacity-100" : "opacity-0"}`}
     >
       <div>
-        <h1 className="text-4xl font-semibold leading-[1.05] tracking-tight text-kiperfy-text sm:text-5xl lg:text-6xl">
-          {title}
-        </h1>
-        <p className="mt-5 text-lg text-kiperfy-text">{sub}</p>
+        {heading ? (
+          <h1 className="text-3xl font-semibold leading-[1.05] tracking-tight text-kiperfy-text sm:text-4xl lg:text-5xl">
+            {heading}
+          </h1>
+        ) : null}
+        <p className={`text-xl font-semibold leading-snug text-kiperfy-text sm:text-2xl ${heading ? "mt-5" : ""}`}>{hook}</p>
+        <p className="mt-4 text-base leading-relaxed text-kiperfy-grey sm:text-lg">{sub}</p>
         <ul className="mt-7 grid grid-cols-2 gap-3">
           {features.map((f) => (
             <li key={f} className="flex items-start gap-2 text-sm font-medium text-kiperfy-text">
@@ -317,7 +325,11 @@ function TabPanel({ id, onCta }: { id: ModuleId; onCta: () => void }) {
           >
             {cta}
           </button>
-          <button className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-kiperfy-purple shadow-sm ring-1 ring-kiperfy-button/30 transition hover:bg-kiperfy-purple/10">
+          <button
+            type="button"
+            onClick={onLogin}
+            className="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-kiperfy-purple shadow-sm ring-1 ring-kiperfy-button/30 transition hover:bg-kiperfy-purple/10"
+          >
             {t("nav_login")}
           </button>
         </div>
